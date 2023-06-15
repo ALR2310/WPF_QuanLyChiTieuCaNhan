@@ -1,0 +1,369 @@
+﻿<Window x:Class="QuanLyChiTieu.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QuanLyChiTieu.Model"
+        mc:Ignorable="d"
+        
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowStartupLocation="CenterScreen"
+        Height="600" Width="1000">
+
+    <Window.Resources>
+        <local:RowToIndexConverter x:Key="RowToIndexConverter"/>
+    </Window.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <!--#region Thanh Menu Bên Trên-->
+        <materialDesign:ColorZone Mode="Inverted" >
+            <DockPanel>
+                <materialDesign:PopupBox DockPanel.Dock="Right" PlacementMode="BottomAndAlignRightEdges">
+                    <ListBox>
+                        <ListBoxItem Name="lsb_setting" PreviewMouseDown="lsb_setting_PreviewMouseDown" Content="Setting" />
+                        <ListBoxItem Name="lsb_account" PreviewMouseDown="lsb_account_PreviewMouseDown" Content="Account" />
+                        <Separator/>
+                        <ListBoxItem Name="lsb_logout" PreviewMouseDown="lsb_logout_PreviewMouseDown" Content="Logout" />
+                    </ListBox>
+                </materialDesign:PopupBox>
+                <StackPanel Orientation="Horizontal">
+                    <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+                    <TextBlock 
+                        Margin="16,0,0,0" FontSize="15" 
+                        VerticalAlignment="Center"
+                        Text="Spending Management" />
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:ColorZone>
+        <!--#endregion-->
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <!--#region Tìm Kiếm Và Lọc Ngày-->
+                <Border 
+                    Grid.Row="0" Margin="5" 
+                    BorderBrush="Black" 
+                    BorderThickness="0.7" CornerRadius="5">
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <DatePicker
+                            Name="dp_search"
+                            Margin="10"
+                            Grid.Column="0"
+                            Width="120"
+                            FontWeight="Bold"
+                            SelectedDateChanged="dp_search_SelectedDateChanged"
+                            materialDesign:HintAssist.Hint="Ngày"
+                            materialDesign:TextFieldAssist.HasClearButton="True"
+                            Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+
+                        <TextBox
+                            Grid.Column="1"
+                            Name="txt_Search" 
+                            Margin="10" FontWeight="Bold"
+                            TextChanged="txt_Search_TextChanged"
+                            materialDesign:HintAssist.Hint="Tìm Kiếm"
+                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                        <Button 
+                                Margin="3 0 0 0"
+                                Grid.Column="2"
+                                FontSize="12" Height="40"
+                                Foreground="Black"
+                                BorderBrush="Black"
+                                Background="Azure"
+                                materialDesign:ButtonAssist.CornerRadius="5" >
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal" >
+                                    <TextBlock Text="Tổng Tiền: " />
+                                    <TextBlock Name="txt_total" Text="0" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+
+                        <Button
+                            Grid.Column="3"
+                            Name="bt_Static"
+                            Content="Thống Kê"
+                            Click="bt_Static_Click"
+                            Background="#FF27CCBB"
+                            BorderBrush="#FF04675D"
+                            Height="40" Margin="5"
+                            materialDesign:ButtonAssist.CornerRadius="5"/>
+                    </Grid>
+                </Border>
+                <!--#endregion-->
+
+                <!--#region Hiển Thị Dữ Liệu-->
+                <Border 
+                Grid.Row="1" Margin="5" 
+                BorderBrush="Black" 
+                BorderThickness="0.7" CornerRadius="5">
+
+                    <DataGrid Name="dg_show" 
+                        IsReadOnly="True" 
+                              IsSynchronizedWithCurrentItem="True"
+                              SelectionChanged="dg_show_SelectionChanged" 
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <!--<DataGridTextColumn Header="STT" Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Converter={StaticResource RowToIndexConverter}}" />-->
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+                            <DataGridTextColumn Header="Ngày" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                            <DataGridTextColumn Header="Tên khoản chi" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Số tiền" Binding="{Binding Price, StringFormat={}{0:N0} VND}" />
+                            <DataGridTextColumn Header="Thời gian" Binding="{Binding Time, StringFormat={}{0:hh\\:mm}}"/>
+                            <DataGridTextColumn Header="Thông tin thêm" Binding="{Binding MoreInfo}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                </Border>
+                <!--#endregion-->
+                
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <!--#region Các Nút THêm Xoá Sửa-->
+                <Border 
+                    Grid.Row="0" Margin="5" 
+                    BorderBrush="Black" 
+                    BorderThickness="0.7" CornerRadius="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button 
+                            Grid.Column="0" Content="Thêm" 
+                            Name="bt_Add" Height="40" 
+                            Click="bt_Add_Click"
+                            IsDefault="True"
+                            Background="#FF34C034" Margin="6"
+                            BorderBrush="Green"
+                            materialDesign:ButtonAssist.CornerRadius="5"/>
+
+                        <Button 
+                            Grid.Column="1" Content="Sửa" 
+                            Name="bt_Upd" Height="40" 
+                            Click="bt_Upd_Click"
+                            IsDefault="False"
+                            Background="#FF6F6FDF" Margin="6"
+                            BorderBrush="#FF3636CF"
+                            materialDesign:ButtonAssist.CornerRadius="5"/>
+
+                        <Button 
+                            Grid.Column="2" Content="Xoá" 
+                            Name="bt_Del" Height="40" 
+                            Click="bt_Del_Click"
+                            Background="#FFFD6D6D" Margin="6"
+                            BorderBrush="#FFE91010"
+                            materialDesign:ButtonAssist.CornerRadius="5" />
+
+                    </Grid>
+                </Border>
+                <!--#endregion-->
+
+                <!--#region Các Textbox nhập dữ liệu-->
+                <Border 
+                    Grid.Row="1" Margin="5" 
+                    BorderBrush="Black" 
+                    BorderThickness="0.7" CornerRadius="5">
+
+                    <StackPanel Margin="40 20" >
+                        <TextBox
+                            Name="txt_ID" 
+                            Margin="0 5"
+                            IsReadOnly="True"
+                            FontWeight="Black" FontSize="13"
+                            VerticalAlignment="Center"
+                            materialDesign:HintAssist.Hint="ID"
+                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                        <DatePicker
+                            Name="pk_Date"
+                            Margin="0 2"
+                            FontWeight="Black" FontSize="13"
+                            materialDesign:HintAssist.Hint="Ngày"
+                            materialDesign:TextFieldAssist.HasClearButton="True"
+                            SelectedDate="{x:Static sys:DateTime.Now}"
+                            Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+
+                        <ComboBox
+                            Name="cb_name"
+                            Margin="0 10 0 0"
+                            FontWeight="Black" FontSize="13"
+                            materialDesign:TextFieldAssist.HasClearButton="True"
+                            materialDesign:HintAssist.Hint="Tên Khoản Chi"
+                            IsEditable="True" />
+
+                        <TextBox
+                            Name="txt_Price"
+                            Margin="0 2"
+                            FontWeight="Black" FontSize="13"
+                            VerticalAlignment="Center"
+                            materialDesign:HintAssist.Hint="Số Tiền"
+                            materialDesign:TextFieldAssist.HasClearButton="True"
+                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                        <TextBox
+                            Name="txt_moreInfo"
+                            Margin="0 2"
+                            FontWeight="Black" FontSize="13"
+                            VerticalAlignment="Center"
+                            materialDesign:HintAssist.Hint="Thông Tin Thêm"
+                            materialDesign:TextFieldAssist.HasClearButton="True"
+                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                        <materialDesign:TimePicker
+                            Name="tp_time"
+                            Margin="0 2"
+                            FontWeight="Black" FontSize="13"
+                            VerticalAlignment="Center"
+                            Is24Hours="True"
+                            SelectedTime="{x:Static sys:DateTime.Now}"
+                            materialDesign:HintAssist.Hint="Thời Gian"
+                            Style="{StaticResource MaterialDesignFloatingHintTimePicker}" />
+
+                        <Button
+                            Name="bt_clearData"
+                            Click="bt_clearData_Click"
+                            Margin=" 0 10"
+                            materialDesign:ButtonAssist.CornerRadius="5" 
+                            Foreground="Black"
+                            BorderBrush="Black"
+                            Background="#FFFDF4F4">
+                            <Button.Content>
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center" Text="Dọn Dữ Liệu" />
+                                        <Image Source="icons/trash.png"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button.Content>
+                        </Button>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="2.2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button 
+                                Margin="0 0 3 0"
+                                FontSize="12"
+                                Foreground="Black"
+                                BorderBrush="Black"
+                                Background="Azure"
+                                materialDesign:ButtonAssist.CornerRadius="5" >
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <TextBlock Text="SL: " />
+                                        <TextBlock Name="txt_count" Text="0" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+
+                            <Button 
+                                Margin="3 0 0 0"
+                                Grid.Column="1"
+                                FontSize="12"
+                                Foreground="Black"
+                                BorderBrush="Black"
+                                Background="Azure"
+                                materialDesign:ButtonAssist.CornerRadius="5" >
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <TextBlock Text="Tổng: " />
+                                        <TextBlock Name="txt_totalprice" Text="0" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                            
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+                <!--#endregion-->
+
+                <!--#region Các nút Xuất dữ liệu-->
+                <Border 
+                    Grid.Row="2" Margin="5" 
+                    BorderBrush="Black" 
+                    BorderThickness="0.7" CornerRadius="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Name="bt_excel" Click="bt_excel_Click" Margin="10" Grid.Column="0" Height="40" Width="auto" Background="Azure" BorderBrush="Green"
+                    BorderThickness="0.5" materialDesign:ButtonAssist.CornerRadius="5" >
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" >
+                                    <TextBlock 
+                                        Text="Xuất File"
+                                        Foreground="Black"
+                                        FontWeight="Medium" 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                                    <Image Source="Icons/Excel.png" />
+                                </StackPanel>
+
+                            </Grid>
+                        </Button>
+
+                        <Button Name="bt_pdf" Click="bt_pdf_Click" Margin="10" Grid.Column="1" Height="40" Width="auto" Background="Azure" BorderBrush="Orange"
+                    BorderThickness="0.5" materialDesign:ButtonAssist.CornerRadius="5" >
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" >
+                                    <TextBlock 
+                                        Text="Xuất File"
+                                        Foreground="Black"
+                                        FontWeight="Medium" 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                                    <Image Source="Icons/Pdf.png" />
+                                </StackPanel>
+
+                            </Grid>
+                        </Button>
+                    </Grid>
+                </Border>
+                <!--#endregion-->
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
